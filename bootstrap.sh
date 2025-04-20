@@ -9,6 +9,7 @@ SCRIPTS=(
   shell-tools.sh
   vpn.sh
   fonts.sh
+  nerd-fonts.sh
 )
 
 for script in "${SCRIPTS[@]}"; do
