@@ -1,6 +1,7 @@
 # Bootstrap scripts for setting up my new system
 
-\*Currently Fedora focused. Will merge or add Arch and Ubuntu-based later.
+Currently Fedora focused. Will merge or add Arch and Ubuntu-based later. Tree represents
+future state. Might not have all scripts yet.
 
 bootstrap/
 ├── bootstrap.sh # 🧠 Master script to orchestrate everything
@@ -9,54 +10,26 @@ bootstrap/
 │ ├── dev-tools.sh # 🦀 Rust, uv, cargo & Python tooling
 │ ├── shell-tools.sh # 💻 Terminal enhancements (zoxide, oh-my-posh)
 │ ├── vpn.sh # 🔐 Mullvad + ProtonVPN setup
-│ ├── nerd-fonts.sh # 🔤 Installs patched Nerd Fonts
-│ ├── fonts.sh # 🖋 Optional system fonts
-│ ├── gnome.sh # 🖥️ GNOME tweaks (extensions/tools)
-│ ├── hyprland.sh # 🎯 Hyprland setup (Wayland/sway tools)
-│ ├── tuxedo.sh # 🧬 Tuxedo laptop drivers/tools
-│ ├── stow.sh # 🗃 Dotfile deployment via GNU Stow
-│ └── final-touches.sh # 🎀 Shell, themes, cleanup
-├── configs/
-│ ├── .config/ # ⬅️ Dotfiles structured for Stow
-│ ├── .zshrc # (if used) Shell config
-│ ├── .bashrc # Bash fallback
-│ └── .gitconfig # Git identity/config
+│ ├── fonts.sh # 🔤 Installs Nerd Fonts from GitHub
+│ ├── kitty.sh # 🐱 ~Custom~ Regular Kitty installer
+│ ├── zen.sh # 🧘 Zen browser installer + profile backup/version check
+│ ├── tuxedo.sh # 🧬 Tuxedo laptop drivers/tools (Fedora-friendly)
+│ ├── dotfiles.sh # 🗃 Clones dotfiles repo, backs up existing, runs Stow
+│ ├── final-touches.sh # 🎀 Optional polish (themes, cleanup)
+│ └── 1password.sh # 🔐 Manage passwords with desktop and CLI implementation
 ├── logs/ # 📜 Optional logs from script runs
 ├── docs/ # 📄 Notes (e.g., gnome-extensions.md)
 │ └── gnome-extensions.md
 └── README.md # 📘 Project overview & usage
 
-# 🧩 GNOME Extensions
+## 🛠️ Dotfiles Setup
 
-These are the GNOME extensions I typically use. Search and enable them in the Extensions app (or GNOME Extension Manager):
+This script will:
 
-## Essential
+- Clone your dotfiles repo into `~/.dotfiles`
+- Back up any overlapping files
+- Run `stow` to symlink everything cleanly
 
-- [x] Blur My Shell
-- [x] Just Perfection
-- [x] Open Bar
-- [x] Space Bar
-- [x] Switcher
-- [x] Tactile
-- [x] TopHat
-
-## Utilities
-
-- [x] Auto Move Windows
-- [x] Native Window Placement
-- [x] Screenshot Window Sizer
-- [x] AppIndicator/KStatusNotifier Support (for tray icons)
-
-## Optional
-
-- [ ] Workspace Matrix
-- [ ] Compiz Magic Lamp
-- [ ] Burn My Windows (chaos mode)
-
----
-
-## ⚙️ Tweaks I usually make
-
-- **Just Perfection**: Hide Activities button, reduce top bar padding
-- **Blur My Shell**: Set blur strength to ~20–30
-- **Switcher**: Move switcher overlay to center
+```bash
+./scripts/dotfiles.sh
+```

@@ -45,6 +45,7 @@ CARGO_TOOLS=(
   markdown-oxide
   alacritty
   eza
+  tealdeer
 )
 
 echo "🦀 Installing CLI tools with cargo..."
