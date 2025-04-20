@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+# Usage: AUDIT_MODE=true ./bootstrap.sh
+
 # =============================
 # 🔐 Sudo Keepalive
 # =============================
@@ -44,3 +46,9 @@ for script in "${SCRIPTS[@]}"; do
 done
 
 echo "✅ Bootstrap complete! Enjoy your polished setup."
+
+# Optional: Run audit summary
+if [[ "${AUDIT_MODE:-false}" == true ]]; then
+  echo "📋 Running post-bootstrap log summary..."
+  ./log-summary.sh
+fi
