@@ -8,6 +8,10 @@ set -euo pipefail
 
 echo "🧱 Installing core utilities and build tools..."
 
+# 🔌 Enable Yazi COPR before package install
+echo "🔌 Enabling COPR repo for yazi..."
+sudo dnf copr enable -y lihaohong/yazi
+
 PACKAGES=(
   git curl wget gnupg unzip gzip tar rsync
   make cmake gcc gcc-c++ clang lldb
@@ -16,6 +20,8 @@ PACKAGES=(
   python3 python3-pip
   p7zip fastfetch ufw fuse3
   trash-cli multitail
+  stow
+  yazi
 )
 
 FAILED=()

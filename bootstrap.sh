@@ -3,6 +3,14 @@ set -euo pipefail
 
 # Usage: AUDIT_MODE=true ./bootstrap.sh
 
+# Auto-log all output (stdout + stderr)
+LOG_DIR="logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/bootstrap-$(date +%Y%m%d-%H%M%S).log"
+exec &> >(tee -a "$LOG_FILE")
+
+echo "📋 Logging bootstrap output to: $LOG_FILE"
+
 # =============================
 # 🔐 Sudo Keepalive
 # =============================
@@ -24,15 +32,19 @@ echo "🌱 Starting system bootstrap..."
 
 SCRIPTS=(
   system-prep.sh
+  multimedia.sh
   dev-base.sh
+  fonts.sh
   dev-tools.sh
   shell-tools.sh
   vpn.sh
-  fonts.sh
+  kitty.sh
+  zen.sh
   tuxedo-setup.sh
   1password.sh
   security.sh
-  multimedia.sh
+  dotfiles.sh
+  final-touches.sh
 )
 
 for script in "${SCRIPTS[@]}"; do

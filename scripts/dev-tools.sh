@@ -26,7 +26,7 @@ fi
 # UV TOOLS
 UV_TOOLS=(
   ruff
-  pylsp
+  python-lsp-server
   pytest
   pyright
   debugpy
@@ -39,13 +39,14 @@ done
 
 # CARGO TOOLS
 CARGO_TOOLS=(
-  yazi
-  ya
   hx
-  markdown-oxide
-  alacritty
   eza
   tealdeer
+  rioterm
+  typos-cli
+  cargo-expand
+  cargo-edit
+  cargo-watch
 )
 
 echo "🦀 Installing CLI tools with cargo..."
@@ -58,6 +59,14 @@ for tool in "${CARGO_TOOLS[@]}"; do
   fi
   echo ""
 done
+
+# Special-case install: markdown-oxide
+if ! command -v markdown-oxide &>/dev/null; then
+  echo "📦 Installing markdown-oxide from GitHub..."
+  cargo install --locked --git https://github.com/Feel-ix-343/markdown-oxide.git markdown-oxide
+else
+  echo "✅ markdown-oxide already installed"
+fi
 
 # ==========================
 # 📝 GUI Code Editors
