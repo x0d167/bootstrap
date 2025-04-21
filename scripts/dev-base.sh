@@ -8,10 +8,19 @@ set -euo pipefail
 
 echo "🧱 Installing core utilities and build tools..."
 
-# 🔌 Enable Yazi COPR before package install
-echo "🔌 Enabling COPR repo for yazi..."
-sudo dnf copr enable -y lihaohong/yazi
+# ─────────────────────────────
+# 🔌 Enable Yazi COPR repo
+# ─────────────────────────────
+if ! sudo dnf repolist | grep -q "lihaohong/yazi"; then
+  echo "🔌 Enabling COPR repo for yazi..."
+  sudo dnf copr enable -y lihaohong/yazi
+else
+  echo "✅ Yazi COPR already enabled."
+fi
 
+# ─────────────────────────────
+# 🧰 Package list
+# ─────────────────────────────
 PACKAGES=(
   git curl wget gnupg unzip gzip tar rsync
   make cmake gcc gcc-c++ clang lldb
@@ -27,6 +36,9 @@ PACKAGES=(
 FAILED=()
 SUCCEEDED=()
 
+# ─────────────────────────────
+# 📦 Install packages
+# ─────────────────────────────
 for pkg in "${PACKAGES[@]}"; do
   echo "🔧 Installing $pkg..."
   if sudo dnf install -y "$pkg"; then
@@ -37,6 +49,9 @@ for pkg in "${PACKAGES[@]}"; do
   fi
 done
 
+# ─────────────────────────────
+# 📋 Results Summary
+# ─────────────────────────────
 echo "✅ Installation complete!"
 echo "----------------------------"
 

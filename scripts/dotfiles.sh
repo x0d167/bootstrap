@@ -8,6 +8,7 @@ set -euo pipefail
 
 REPO="https://github.com/x0d167/.dotfiles.git"
 TARGET="$HOME/.dotfiles"
+DEPLOY_LOG="$TARGET/.dotfiles-deploy.log"
 
 if ! command -v stow &>/dev/null; then
   echo "❌ 'stow' is not installed. Please add it to your base packages or install it manually."
@@ -66,7 +67,7 @@ backups=("$BACKUP_ROOT"/*)
 shopt -u nullglob
 
 if [ "${#backups[@]}" -gt "$MAX_BACKUPS" ]; then
-  to_delete=($(ls -1dt "$BACKUP_ROOT"/* | tail -n +$((MAX_BACKUPS + 1))))
+  mapfile -t to_delete < <(ls -1dt "$BACKUP_ROOT"/* | tail -n +$((MAX_BACKUPS + 1)))
   for dir in "${to_delete[@]}"; do
     echo "🗑️  Deleting old backup: $dir"
     rm -rf "$dir"
@@ -77,6 +78,11 @@ fi
 
 # === Stow ===
 echo "🔗 Running stow with --adopt (existing files will be moved into the repo)..."
-stow --adopt bash config
+{
+  echo ""
+  echo "===== $(date): Stow operation ====="
+  stow --adopt bash config
+  echo "✅ Dotfiles deployed."
+} | tee -a "$DEPLOY_LOG"
 
-echo "✅ Dotfiles deployed!"
+echo "📝 Deployment recorded in $DEPLOY_LOG"

@@ -7,7 +7,7 @@ TIMESTAMP=$(date '+%Y-%m-%d_%H-%M-%S')
 LOGDIR="$HOME/.local/share/zen-logs"
 mkdir -p "$LOGDIR"
 
-LOGFILE="$LOGDIR/zen-install-$TIMESTAMP.log"
+LOGFILE="$LOGDIR/zen-install-$(hostname)-$USER-$TIMESTAMP.log"
 ln -sf "$LOGFILE" "$LOGDIR/latest.log"
 
 log() {
@@ -150,7 +150,7 @@ backup_and_prune() {
           echo "💡 Would delete old $type backup: $old_backup"
           log "💡 Would delete old $type backup: $old_backup"
         else
-          rm -rf "$old_backup"
+          rm -rf -- "$old_backup"
           echo "🗑️  Deleted old $type backup: $old_backup"
           log "🗑️  Deleted old $type backup: $old_backup"
         fi
@@ -196,7 +196,7 @@ if [ -f "$BIN_PATH" ]; then
   if [ "$DRY_RUN" = true ]; then
     echo "💡 Would remove: $BIN_PATH"
   else
-    rm "$BIN_PATH"
+    rm -- "$BIN_PATH"
   fi
 fi
 
@@ -205,7 +205,7 @@ if [ -d "$INSTALL_DIR" ]; then
   if [ "$DRY_RUN" = true ]; then
     echo "💡 Would remove: $INSTALL_DIR"
   else
-    rm -rf "$INSTALL_DIR"
+    rm -rf -- "$INSTALL_DIR"
   fi
 fi
 
@@ -214,7 +214,7 @@ if [ -f "$DESKTOP_FILE" ]; then
   if [ "$DRY_RUN" = true ]; then
     echo "💡 Would remove: $DESKTOP_FILE"
   else
-    rm "$DESKTOP_FILE"
+    rm -- "$DESKTOP_FILE"
   fi
 fi
 
@@ -226,9 +226,13 @@ else
   echo "📥 Downloading Zen tarball..."
   curl -L "$TARBALL_URL" -o "$TARBALL_TMP"
   echo "📦 Extracting..."
-  tar -xJf "$TARBALL_TMP"
+  tar -xJf "$TARBALL_TMP" || {
+    echo "❌ Extraction failed"
+    log "❌ Extraction failed"
+    exit 1
+  }
   mv "$EXTRACTED_DIR_NAME" "$INSTALL_DIR"
-  rm "$TARBALL_TMP"
+  rm -- "$TARBALL_TMP"
 fi
 
 # === BIN LAUNCHER ===

@@ -1,28 +1,49 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "🦀 Installing tools via Cargo..."
+# =============================
+# 🦀 cargo-tools.sh
+# Installs Rust-based CLI tools using binstall if available
+# =============================
 
-# Ensure cargo is available
-if ! command -v cargo &>/dev/null; then
-  echo "❌ Cargo not found. Please run scripts/rust.sh first."
-  exit 1
+echo "🚀 Installing Rust-based CLI tools..."
+
+# Ensure ~/.cargo/bin is in PATH for this session
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Ensure cargo-binstall is available
+if ! command -v cargo-binstall &>/dev/null; then
+  echo "📦 Installing cargo-binstall..."
+  cargo install cargo-binstall
 fi
 
-tools=(
-  yazi
-  ya
-  hx # Helix editor
-  markdown-oxide
-  alacritty
+CARGO_TOOLS=(
+  hx
   eza
+  tealdeer
+  rioterm
+  typos-cli
+  cargo-expand
+  cargo-edit
+  cargo-watch
 )
 
-for tool in "${tools[@]}"; do
-  if cargo install --list | grep -q "^$tool v"; then
-    echo "✅ $tool already installed"
+for tool in "${CARGO_TOOLS[@]}"; do
+  echo "🦀 Installing $tool..."
+  if cargo binstall -y "$tool"; then
+    echo "✅ $tool installed via binstall"
+  elif cargo install "$tool"; then
+    echo "✅ $tool installed via cargo"
   else
-    echo "📦 Installing $tool..."
-    cargo install "$tool"
+    echo "❌ Failed to install $tool"
   fi
+  echo ""
 done
+
+# Special-case install: markdown-oxide
+if ! command -v markdown-oxide &>/dev/null; then
+  echo "📦 Installing markdown-oxide from GitHub..."
+  cargo install --locked --git https://github.com/Feel-ix-343/markdown-oxide.git markdown-oxide
+else
+  echo "✅ markdown-oxide already installed"
+fi

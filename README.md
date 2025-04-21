@@ -28,6 +28,12 @@ bootstrap/
 └── README.md                   # 📘 Project overview & usage
 ```
 
+## 🦀 Rust CLI Tools
+
+To speed up CLI tool installation (like `eza`, `hx`, `rioterm`, etc.), we use [`cargo-binstall`](https://github.com/cargo-bins/cargo-binstall) when available to download prebuilt binaries instead of compiling from source.
+
+This happens automatically inside `cargo-tools.sh`. If you’re low on resources or running on a VM, this will save a _lot_ of time.
+
 ## 🛠️ Dotfiles Setup
 
 This script will:

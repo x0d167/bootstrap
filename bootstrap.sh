@@ -1,9 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: AUDIT_MODE=true ./bootstrap.sh
+# =============================
+# 🛠 bootstrap.sh
+# Runs all setup scripts and logs output
+# =============================
 
-# Auto-log all output (stdout + stderr)
+# === Logging setup ===
+START_TIME=$(date +%s)
 LOG_DIR="logs"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/bootstrap-$(date +%Y%m%d-%H%M%S).log"
@@ -11,21 +15,21 @@ exec &> >(tee -a "$LOG_FILE")
 
 echo "📋 Logging bootstrap output to: $LOG_FILE"
 
+# === Get script directory (so we can run from anywhere) ===
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # =============================
 # 🔐 Sudo Keepalive
 # =============================
-
 echo "🔐 Requesting sudo password..."
 sudo -v
 
-# Keep sudo alive until the script ends
+# Keep sudo alive
 (while true; do
   sudo -n true
   sleep 60
 done) 2>/dev/null &
 SUDO_PID=$!
-
-# Kill the background process on exit
 trap 'kill "$SUDO_PID"' EXIT
 
 echo "🌱 Starting system bootstrap..."
@@ -34,33 +38,47 @@ SCRIPTS=(
   system-prep.sh
   multimedia.sh
   dev-base.sh
-  fonts.sh
   dev-tools.sh
+  cargo-tools.sh
   shell-tools.sh
   vpn.sh
+  fonts.sh
   kitty.sh
   zen.sh
   tuxedo-setup.sh
   1password.sh
   security.sh
   dotfiles.sh
-  final-touches.sh
 )
 
 for script in "${SCRIPTS[@]}"; do
-  if [ -f "scripts/$script" ]; then
+  SCRIPT_PATH="$SCRIPT_DIR/scripts/$script"
+  if [ -f "$SCRIPT_PATH" ]; then
+    echo ""
+    echo "========================================"
     echo "🔧 Running $script..."
-    bash "scripts/$script"
+    echo "========================================"
+    (
+      bash "$SCRIPT_PATH"
+    )
   else
     echo "❌ Missing script: $script"
     exit 1
   fi
 done
 
+echo ""
 echo "✅ Bootstrap complete! Enjoy your polished setup."
 
-# Optional: Run audit summary
+# === Audit mode summary (optional) ===
 if [[ "${AUDIT_MODE:-false}" == true ]]; then
+  echo ""
   echo "📋 Running post-bootstrap log summary..."
-  ./log-summary.sh
+  "$SCRIPT_DIR/log-summary.sh"
 fi
+
+# === Runtime summary ===
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+echo ""
+echo "⏱️ Total runtime: $((DURATION / 60)) min $((DURATION % 60)) sec"

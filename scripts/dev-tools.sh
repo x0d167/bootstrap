@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # ==========================
 # 🦀🧪 dev-tools.sh
@@ -37,44 +38,4 @@ for tool in "${UV_TOOLS[@]}"; do
   uv tool install "$tool"
 done
 
-# CARGO TOOLS
-CARGO_TOOLS=(
-  hx
-  eza
-  tealdeer
-  rioterm
-  typos-cli
-  cargo-expand
-  cargo-edit
-  cargo-watch
-)
-
-echo "🦀 Installing CLI tools with cargo..."
-for tool in "${CARGO_TOOLS[@]}"; do
-  if cargo install --list | grep -q "^$tool v"; then
-    echo "✅ $tool already installed"
-  else
-    echo "📦 Installing $tool..."
-    cargo install "$tool"
-  fi
-  echo ""
-done
-
-# Special-case install: markdown-oxide
-if ! command -v markdown-oxide &>/dev/null; then
-  echo "📦 Installing markdown-oxide from GitHub..."
-  cargo install --locked --git https://github.com/Feel-ix-343/markdown-oxide.git markdown-oxide
-else
-  echo "✅ markdown-oxide already installed"
-fi
-
-# ==========================
-# 📝 GUI Code Editors
-# ==========================
-
-if ! command -v zed &>/dev/null; then
-  echo "📝 Installing Zed editor..."
-  curl -f https://zed.dev/install.sh | sh
-else
-  echo "✅ Zed already installed"
-fi
+echo "✅ Python development tools installed!"

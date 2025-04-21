@@ -29,8 +29,14 @@ echo "💾 Installing selected Nerd Fonts..."
 FONT_DIR="$HOME/.local/share/fonts/NerdFonts"
 mkdir -p "$FONT_DIR"
 
-echo "🧹 Cleaning old Nerd Fonts from $FONT_DIR..."
-rm -rf "$FONT_DIR"/*
+# Clean up old fonts only if present
+if [ -d "$FONT_DIR" ] && [ "$(ls -A "$FONT_DIR")" ]; then
+  echo "🧹 Cleaning old Nerd Fonts from $FONT_DIR..."
+  rm -rf -- "${FONT_DIR:?}/"*
+fi
+
+# Temporary download directory
+TMP_ZIP_DIR="$(mktemp -d)"
 
 # Fonts and their download URLs
 declare -A fonts
@@ -47,10 +53,17 @@ fonts=(
 
 for name in "${!fonts[@]}"; do
   echo "📥 Downloading $name..."
-  zip_file="/tmp/${name}.zip"
-  curl -fLo "$zip_file" "${fonts[$name]}"
-  unzip -o "$zip_file" -d "$FONT_DIR"
+  zip_file="$TMP_ZIP_DIR/${name}.zip"
+
+  if curl -fLo "$zip_file" "${fonts[$name]}"; then
+    unzip -o "$zip_file" -d "$FONT_DIR"
+  else
+    echo "❌ Failed to download $name. Skipping..."
+  fi
 done
+
+# Clean up zip files
+rm -rf "$TMP_ZIP_DIR"
 
 echo "✅ Nerd Fonts installed in $FONT_DIR"
 
