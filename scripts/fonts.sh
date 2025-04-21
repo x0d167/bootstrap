@@ -26,8 +26,11 @@ echo "✅ UI and system fonts installed."
 # ─────────────────────────────
 echo "💾 Installing selected Nerd Fonts..."
 
-FONT_DIR="$HOME/.local/share/fonts"
+FONT_DIR="$HOME/.local/share/fonts/NerdFonts"
 mkdir -p "$FONT_DIR"
+
+echo "🧹 Cleaning old Nerd Fonts from $FONT_DIR..."
+rm -rf "$FONT_DIR"/*
 
 # Fonts and their download URLs
 declare -A fonts
