@@ -77,11 +77,11 @@ else
 fi
 
 # === Stow ===
-echo "🔗 Running stow with --adopt (existing files will be moved into the repo)..."
+echo "🔗 Linking dotfiles into place with stow..."
 {
   echo ""
   echo "===== $(date): Stow operation ====="
-  stow --adopt bash config
+  stow -R bash config
   echo "✅ Dotfiles deployed."
 } | tee -a "$DEPLOY_LOG"
 
