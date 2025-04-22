@@ -33,19 +33,13 @@ else
   echo "✅ RPM Fusion already installed."
 fi
 
-# Enable openh264 (Cisco-provided H.264 codec)
+# ─────────────────────────────
+# Enable openh264 codec (Cisco)
+# ─────────────────────────────
 if ! sudo dnf repolist enabled | grep -q "fedora-cisco-openh264"; then
   echo "📡 Enabling fedora-cisco-openh264 repo..."
-  sudo dnf config-manager --set-enabled fedora-cisco-openh264
+  sudo dnf config-manager --enable fedora-cisco-openh264 || true
 fi
-
-# Enable RPM Fusion update repos (free and nonfree)
-for repo in rpmfusion-free-updates rpmfusion-nonfree-updates; do
-  if ! sudo dnf repolist enabled | grep -q "$repo"; then
-    echo "📡 Enabling $repo..."
-    sudo dnf config-manager --set-enabled "$repo"
-  fi
-done
 
 # ─────────────────────────────
 # Full System Update
