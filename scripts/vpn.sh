@@ -11,15 +11,28 @@ FEDORA_VERSION=$(rpm -E %fedora)
 # ─────────────────────────────
 # Mullvad Repo + Installation
 # ─────────────────────────────
-if ! dnf repolist | grep -q mullvad; then
-  echo "🔐 Adding Mullvad repo..."
-  sudo dnf config-manager --add-repo https://repository.mullvad.net/rpm/stable/mullvad.repo
+
+MULLVAD_REPO_PATH="/etc/yum.repos.d/mullvad.repo"
+
+if [ ! -f "$MULLVAD_REPO_PATH" ]; then
+  echo "🔐 Adding Mullvad repo manually..."
+  sudo tee "$MULLVAD_REPO_PATH" >/dev/null <<EOF
+[mullvad]
+name=Mullvad VPN
+baseurl=https://repository.mullvad.net/rpm/stable
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://repository.mullvad.net/rpm/stable/mullvad.asc
+EOF
 else
-  echo "✅ Mullvad repo already exists"
+  echo "✅ Mullvad repo already exists."
 fi
 
 echo "📦 Installing Mullvad browser and VPN..."
-sudo dnf install -y mullvad-browser mullvad-vpn
+if ! sudo dnf install -y mullvad-browser mullvad-vpn; then
+  echo "⚠️ Failed to install Mullvad browser or VPN. Continuing anyway..."
+fi
 
 # ─────────────────────────────
 # ProtonVPN Repo + Installation
@@ -30,14 +43,22 @@ PROTON_RPM_PATH="/tmp/${PROTON_RPM}"
 
 if ! rpm -q protonvpn-stable-release &>/dev/null; then
   echo "🌐 Downloading ProtonVPN repo RPM..."
-  curl -Lo "$PROTON_RPM_PATH" "$PROTON_URL"
-  sudo dnf install -y "$PROTON_RPM_PATH"
+  if curl -fLo "$PROTON_RPM_PATH" "$PROTON_URL"; then
+    sudo dnf install -y "$PROTON_RPM_PATH"
+  else
+    echo "⚠️ Failed to download ProtonVPN repo RPM. Skipping ProtonVPN install..."
+    PROTONVPN_FAILED=true
+  fi
 else
   echo "✅ ProtonVPN repo already installed"
 fi
 
-echo "📦 Installing ProtonVPN desktop client..."
-sudo dnf install -y proton-vpn-gnome-desktop
+if [ -z "${PROTONVPN_FAILED:-}" ]; then
+  echo "📦 Installing ProtonVPN desktop client..."
+  if ! sudo dnf install -y proton-vpn-gnome-desktop; then
+    echo "⚠️ ProtonVPN install failed. Skipping..."
+  fi
+fi
 
 # ─────────────────────────────
 # GNOME Tray Integration
