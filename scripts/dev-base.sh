@@ -23,7 +23,7 @@ fi
 # ─────────────────────────────
 PACKAGES=(
   git curl wget gnupg unzip gzip tar rsync
-  make cmake gcc gcc-c++ clang lldb
+  make cmake gcc gcc-c++ clang lldb luarocks
   btop jq fzf bat fd-find ripgrep
   neovim nano vim
   python3 python3-pip
